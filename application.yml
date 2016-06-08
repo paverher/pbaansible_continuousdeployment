@@ -23,7 +23,7 @@
 
   pre_tasks:
 
-  - name: disable server in haproxy
+  - name: disable node in haproxy
     shell: echo "disable server {{ inventory_hostname }}" | socat stdio /var/lib/haproxy/stats
     delegate_to: "{{ item }}"
     with_items: groups.lb
@@ -31,21 +31,21 @@
 
   tasks:
 
-  - name: clean existing website content
+  - name: remove current website content
     file: path=/usr/share/nginx/html/ state=absent
 
-  - name: deploy website content
+  - name: deploy new website content
     git: repo=https://github.com/paverher/verysimplewebpage.git
          dest=/usr/share/nginx/html/
 
   handlers:
 
-  - name: restart nginx
+  - name: restart nginx service
     action: service name=nginx state=restarted
 
   post_tasks:
 
-  - name: enable server in haproxy
+  - name: enable node in haproxy
     shell: echo "enable server {{ inventory_hostname }}" | socat stdio /var/lib/haproxy/stats
     delegate_to: "{{ item }}"
     with_items: groups.lb
