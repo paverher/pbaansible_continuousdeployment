@@ -1,7 +1,27 @@
 ---
 - hosts: all
   sudo: true
+  gather_facts: no
+  remote_user: root
+
   tasks:
-    - name: update apt cache
-      apt: update_cache=yes
-    - include: apache.yml
+
+  - name: install ssh key
+    authorized_key: user=vagrant 
+                    key="{{ lookup('file', '/home/vagrant/.ssh/id_rsa.pub') }}" 
+                    state=present
+
+  - name: put node in maintenance
+    authorized_key: user=vagrant 
+                    key="{{ lookup('file', '/home/vagrant/.ssh/id_rsa.pub') }}" 
+                    state=present
+
+  - name: upgrade code
+    authorized_key: user=vagrant 
+                    key="{{ lookup('file', '/home/vagrant/.ssh/id_rsa.pub') }}" 
+                    state=present
+
+  - name: put node back in use
+    authorized_key: user=vagrant 
+                    key="{{ lookup('file', '/home/vagrant/.ssh/id_rsa.pub') }}" 
+                    state=present
