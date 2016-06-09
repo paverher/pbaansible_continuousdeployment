@@ -22,34 +22,20 @@
 
   tasks:
 
-  - name: Download and install haproxy and socat
+  - name: Install socat
     apt: pkg={{ item }} state=latest
     with_items:
-    - haproxy
     - socat
-
-  - name: Enable HAProxy
-    lineinfile: dest=/etc/default/haproxy regexp="^ENABLED" line="ENABLED=1"
-    notify: restart haproxy
-
-  - name: Configure the haproxy cnf file with hosts
-    template: src=templates/haproxy.cfg.j2 dest=/etc/haproxy/haproxy.cfg
-    notify: restart haproxy
-
-  handlers:
-
-  - name: restart haproxy
-    service: name=haproxy state=restarted
 
 
 # webhost
 - hosts: webhost
   sudo: yes
-  serial: 1
+  serial: 2
 
   pre_tasks:
 
-  - name: disable node in haproxy
+  - name: Set web host into maintenance mode
     shell: echo "disable server {{ inventory_hostname }}" | socat stdio /var/lib/haproxy/stats
     delegate_to: "{{ item }}"
     with_items: groups.balancer
@@ -57,16 +43,16 @@
 
   tasks:
 
-  - name: remove current website content
+  - name: Remove current website
     file: path=/usr/share/nginx/html/ state=absent
 
-  - name: deploy new website content
+  - name: Deploy new website
     git: repo=https://github.com/paverher/verysimplewebpage.git
          dest=/usr/share/nginx/html/
 
   post_tasks:
 
-  - name: enable node in haproxy
+  - name: Set web host into active mode
     shell: echo "enable server {{ inventory_hostname }}" | socat stdio /var/lib/haproxy/stats
     delegate_to: "{{ item }}"
     with_items: groups.balancer
