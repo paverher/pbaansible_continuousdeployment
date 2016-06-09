@@ -16,8 +16,8 @@
   - name: install git
     action: apt name=git state=installed update_cache=yes
 
-# web
-- hosts: web
+# webhost
+- hosts: webhost
   sudo: yes
   serial: 1
 
@@ -26,7 +26,7 @@
   - name: disable node in haproxy
     shell: echo "disable server {{ inventory_hostname }}" | socat stdio /var/lib/haproxy/stats
     delegate_to: "{{ item }}"
-    with_items: groups.lb
+    with_items: groups.balancer
 
 
   tasks:
@@ -48,11 +48,11 @@
   - name: enable node in haproxy
     shell: echo "enable server {{ inventory_hostname }}" | socat stdio /var/lib/haproxy/stats
     delegate_to: "{{ item }}"
-    with_items: groups.lb
+    with_items: groups.balancer
 
 
-# lb
-- hosts: lb
+# balancer
+- hosts: balancer
   sudo: yes
 
   tasks:
