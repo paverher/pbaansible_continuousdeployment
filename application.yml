@@ -8,12 +8,12 @@
 
   tasks:
 
-  - name: install ssh key
+  - name: Install ssh key into all hosts
     authorized_key: user=user
                     key="{{ lookup('file', '/home/user/.ssh/id_rsa.pub') }}"
                     state=present
 
-  - name: install git
+  - name: Install git into all hosts
     action: apt name=git state=installed update_cache=yes
 
 # balancer
