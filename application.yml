@@ -38,11 +38,6 @@
     git: repo=https://github.com/paverher/verysimplewebpage.git
          dest=/usr/share/nginx/html/
 
-  handlers:
-
-  - name: restart nginx service
-    action: service name=nginx state=restarted
-
   post_tasks:
 
   - name: enable node in haproxy
